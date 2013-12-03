@@ -87,7 +87,7 @@ $(function (argument) {
 
     registerCommand({
         name: 'handle-zoom',
-        label: 'icon 2',
+        label: 'zoom',
         active: function () {
             $('.card', $canvas)
             .addClass('accept-handle')
@@ -102,10 +102,8 @@ $(function (argument) {
             var $card = $(event.srcElement).closest('.card'),
                 $topLeftHandle,
                 topLeftId,
-                topLeftDragObject,
                 $bottomRightHandle,
                 bottomRightId,
-                bottomRightDragObject,
                 cardOffset;
 
             if(!$card.hasClass('zoom-handled')) {
@@ -123,40 +121,8 @@ $(function (argument) {
                 $topLeftHandle = $('#' + topLeftId);
                 $bottomRightHandle = $('#' + bottomRightId);
 
-                console.log(cardOffset);
-                $topLeftHandle      .offset({left: cardOffset.left - ($topLeftHandle.width() / 2), top: cardOffset.top - ($topLeftHandle.height() / 2)});
-                $bottomRightHandle  .offset({left: cardOffset.left + $card.width() - ($bottomRightHandle.width() / 2), top: cardOffset.top + $card.height() - ($bottomRightHandle.height() / 2)});
-
-                /*
-                $canvas
-                .on('handledown', '#' + topLeftId, function () {
-                    topLeftDragObject = {offset: $card.offset(), width: $card.width(), height: $card.height()};
-                })
-                .on('handledown', '#' + bottomRightId, function () {
-                    bottomRightDragObject = {offset: $card.offset(), width: $card.width(), height: $card.height()};
-                })
-                .on('handlemove', '#' + topLeftId, function (event, offset) {
-                    $card
-                    .offset({left:topLeftDragObject.offset.left + offset.x, top: topLeftDragObject.offset.top + offset.y})
-                    .width(topLeftDragObject.width - offset.x)
-                    .height(topLeftDragObject.height - offset.y);
-                })
-                .on('handlemove', '#' + bottomRightId, function (event, offset) {
-                    $card
-                    .width(bottomRightDragObject.width + offset.x)
-                    .height(bottomRightDragObject.height + offset.y);
-                })
-                .on('handleup', '#' + topLeftId, function (event, offset) {
-                    $card
-                    .offset({left:topLeftDragObject.offset.left + offset.x, top: topLeftDragObject.offset.top + offset.y})
-                    .width(topLeftDragObject.width - offset.x)
-                    .height(topLeftDragObject.height - offset.y);
-                })
-                .on('handleup', '#' + bottomRightId, function (event, offset) {
-                    $card
-                    .width(bottomRightDragObject.width + offset.x)
-                    .height(bottomRightDragObject.height + offset.y);
-                });*/
+                $topLeftHandle.offset({left: cardOffset.left - ($topLeftHandle.width() / 2), top: cardOffset.top - ($topLeftHandle.height() / 2)});
+                $bottomRightHandle.offset({left: cardOffset.left + $card.width() - ($bottomRightHandle.width() / 2), top: cardOffset.top + $card.height() - ($bottomRightHandle.height() / 2)});
 
                 function update (argument) {
                     var topLeftHandleOffset = $topLeftHandle.offset(),
@@ -188,18 +154,21 @@ $(function (argument) {
 
     registerCommand({
         name: 'handle-rotate',
-        label: 'icon 3',
+        label: 'rotate',
         active: function () {
             $('.card', $canvas).addClass('accept-handle');
         },
         deactive: function () {
             $('.card', $canvas).removeClass('accept-handle');
+        },
+        mousedown: function () {
+            
         }
     });
 
     registerCommand({
         name: 'handle',
-        label: 'icon 4',
+        label: 'handle',
         active: function () {
             $canvas
             .on('mousedown', '.handle', this.mousedown)
