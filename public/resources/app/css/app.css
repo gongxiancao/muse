@@ -30,11 +30,6 @@ html,body {
   background-color: cyan;
 }
 
-.canvas {
-  -webkit-perspective: 500px;
-  perspective: 500px;
-}
-
 .card-panel
 {
 
@@ -51,6 +46,12 @@ html,body {
   margin: 5px;
   background-color: chocolate;
   border: solid black 1px;
+}
+
+.card-container {
+  width: 500px;
+  height: 600px;
+  position: absolute;
 }
 
 .card {
@@ -91,7 +92,6 @@ html,body {
 */
 
 .container {
-  -webkit-perspective: 500px;
   width: 150px;
   height: 150px;
   border: 1px solid black;
@@ -101,5 +101,4 @@ html,body {
   width: 150px;
   height: 150px;
   background-color: blue;
-  -webkit-transform: rotateY(50deg);
 }
