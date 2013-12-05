@@ -12,6 +12,25 @@ $(function (argument) {
         toolCommands = {},
         $canvas = $('.canvas');
 
+
+
+    $.fn.rotateY = function (amount) {
+        amount = 'rotateY(' + amount + 'deg)';
+        return this.each(function () {
+            ($this).css('-webkit-transform', amount);
+            ($this).css('transform', amount);
+        });
+    };
+
+    $.fn.perspective = function (amount) {
+        amount = amount + 'px';
+        return this.each(function () {
+            ($this).css('-webkit-perspective', amount);
+            ($this).css('perspective', amount);
+        });
+    };
+
+
     function activateTool(tool) {
         deactiveTool(status.activeTool);
         status.activeTool = tool;
@@ -87,7 +106,7 @@ $(function (argument) {
 
     registerCommand({
         name: 'handle-zoom',
-        label: 'zoom',
+        label: 'resize',
         active: function () {
             $('.card', $canvas)
             .addClass('accept-handle')
@@ -106,15 +125,34 @@ $(function (argument) {
                 bottomRightId,
                 cardOffset;
 
-            if(!$card.hasClass('zoom-handled')) {
+            function update (argument) {
+                var topLeftHandleOffset = $topLeftHandle.offset(),
+                    bottomRightHandleOffset = $bottomRightHandle.offset(),
+                    left, top, right, bottom;
+
+                offsetoffset(topLeftHandleOffset, $topLeftHandle.width()/2, $topLeftHandle.height()/2);
+                offsetoffset(bottomRightHandleOffset,  $bottomRightHandle.width()/2, $bottomRightHandle.height()/2);
+
+                left    = topLeftHandleOffset.left < bottomRightHandleOffset.left? topLeftHandleOffset.left : bottomRightHandleOffset.left;
+                right   = topLeftHandleOffset.left > bottomRightHandleOffset.left? topLeftHandleOffset.left : bottomRightHandleOffset.left;
+                top     = topLeftHandleOffset.top < bottomRightHandleOffset.top? topLeftHandleOffset.top : bottomRightHandleOffset.top;
+                bottom  = topLeftHandleOffset.top > bottomRightHandleOffset.top? topLeftHandleOffset.top : bottomRightHandleOffset.top;
+
+                $card
+                .offset({left: left, top: top})
+                .width(right - left)
+                .height(bottom - top);
+            }
+
+            if(!$card.hasClass('resize-handled')) {
                 topLeftId = options.handleIdPrefix + (++ status.handleSeq);
                 bottomRightId = options.handleIdPrefix + (++ status.handleSeq);
 
-                $card.addClass('zoom-handled');
+                $card.addClass('resize-handled');
 
                 $canvas
-                .append('<div class="zoom handle top-left" id="' + topLeftId + '" card="' + $card.attr('id') + '"></div>')
-                .append('<div class="zoom handle bottom-right" id="' + bottomRightId + '" card="' + $card.attr('id') + '"></div>');
+                .append('<div class="resize handle top-left" id="' + topLeftId + '" card="' + $card.attr('id') + '"></div>')
+                .append('<div class="resize handle bottom-right" id="' + bottomRightId + '" card="' + $card.attr('id') + '"></div>');
 
                 cardOffset = $card.offset();
 
@@ -123,25 +161,6 @@ $(function (argument) {
 
                 $topLeftHandle.offset({left: cardOffset.left - ($topLeftHandle.width() / 2), top: cardOffset.top - ($topLeftHandle.height() / 2)});
                 $bottomRightHandle.offset({left: cardOffset.left + $card.width() - ($bottomRightHandle.width() / 2), top: cardOffset.top + $card.height() - ($bottomRightHandle.height() / 2)});
-
-                function update (argument) {
-                    var topLeftHandleOffset = $topLeftHandle.offset(),
-                        bottomRightHandleOffset = $bottomRightHandle.offset(),
-                        left, top, right, bottom;
-
-                    offsetoffset(topLeftHandleOffset, $topLeftHandle.width()/2, $topLeftHandle.height()/2);
-                    offsetoffset(bottomRightHandleOffset,  $bottomRightHandle.width()/2, $bottomRightHandle.height()/2);
-
-                    left    = topLeftHandleOffset.left < bottomRightHandleOffset.left? topLeftHandleOffset.left : bottomRightHandleOffset.left;
-                    right   = topLeftHandleOffset.left > bottomRightHandleOffset.left? topLeftHandleOffset.left : bottomRightHandleOffset.left;
-                    top     = topLeftHandleOffset.top < bottomRightHandleOffset.top? topLeftHandleOffset.top : bottomRightHandleOffset.top;
-                    bottom  = topLeftHandleOffset.top > bottomRightHandleOffset.top? topLeftHandleOffset.top : bottomRightHandleOffset.top;
-
-                    $card
-                    .offset({left: left, top: top})
-                    .width(right - left)
-                    .height(bottom - top);
-                }
 
                 $canvas
                 .on('handlemove', '#' + topLeftId, update)
@@ -156,13 +175,59 @@ $(function (argument) {
         name: 'handle-rotate',
         label: 'rotate',
         active: function () {
-            $('.card', $canvas).addClass('accept-handle');
+            $('.card', $canvas)
+            .addClass('accept-handle')
+            .on('mousedown', this.mousedown);
         },
         deactive: function () {
-            $('.card', $canvas).removeClass('accept-handle');
+            $('.card', $canvas)
+            .removeClass('accept-handle')
+            .off('mousedown', this.mousedown);
         },
-        mousedown: function () {
-            
+        mousedown: function (event) {
+            var $card = $(event.srcElement).closest('.card'),
+                $handle,
+                handleId,
+                cardOffset;
+
+            function update (argument) {
+                var topLeftHandleOffset = $topLeftHandle.offset(),
+                    bottomRightHandleOffset = $bottomRightHandle.offset(),
+                    left, top, right, bottom;
+
+                offsetoffset(topLeftHandleOffset, $topLeftHandle.width()/2, $topLeftHandle.height()/2);
+                offsetoffset(bottomRightHandleOffset,  $bottomRightHandle.width()/2, $bottomRightHandle.height()/2);
+
+                left    = topLeftHandleOffset.left < bottomRightHandleOffset.left? topLeftHandleOffset.left : bottomRightHandleOffset.left;
+                right   = topLeftHandleOffset.left > bottomRightHandleOffset.left? topLeftHandleOffset.left : bottomRightHandleOffset.left;
+                top     = topLeftHandleOffset.top < bottomRightHandleOffset.top? topLeftHandleOffset.top : bottomRightHandleOffset.top;
+                bottom  = topLeftHandleOffset.top > bottomRightHandleOffset.top? topLeftHandleOffset.top : bottomRightHandleOffset.top;
+
+                $card
+                .offset({left: left, top: top})
+                .width(right - left)
+                .height(bottom - top);
+            }
+
+            if(!$card.hasClass('rotate-handled')) {
+                handleId = options.handleIdPrefix + (++ status.handleSeq);
+                $card.addClass('rotate-handled');
+
+                $canvas
+                .append('<div class="rotate handle top-left" id="' + handleId + '" card="' + $card.attr('id') + '"></div>');
+
+                cardOffset = $card.offset();
+
+                $handle = $('#' + handleId);
+
+                $handle.offset({left: cardOffset.left + $card.width() + $handle.width() / 2, top: cardOffset.top + (($card.height() - $handle.height()) / 2)});
+
+                $canvas
+                .on('handlemove', '#' + topLeftId, update)
+                .on('handlemove', '#' + bottomRightId, update)
+                .on('handleup', '#' + topLeftId, update)
+                .on('handleup', '#' + bottomRightId, update);
+            }
         }
     });
 
