@@ -128,7 +128,7 @@ $(function (argument) {
             .off('mousedown', this.mousedown);
         },
         mousedown: function (event) {
-            var $card = $(event.srcElement).closest('.card'),
+            var $card = $(event.srcElement).closest('.card-container'),
                 $topLeftHandle,
                 topLeftId,
                 $bottomRightHandle,
