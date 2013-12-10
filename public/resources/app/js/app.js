@@ -7,6 +7,7 @@ $(function (argument) {
         },
         options = {
             cardIdPrefix: 'card-',
+            cardContainerIdPrefix: 'card-container-',
             handleIdPrefix: 'handle-'
         },
         toolCommands = {},
@@ -96,8 +97,8 @@ $(function (argument) {
     });
 
     registerCommand({
-        name: 'card',
-        label: 'icon 1',
+        name: 'card-container',
+        label: 'icon 0',
         active: function () {
             $canvas.on('mousedown', this.mousedown);
         },
@@ -105,25 +106,46 @@ $(function (argument) {
             $canvas.off('mousedown', this.mousedown);
         },
         mousedown: function (event) {
-            var cardId = options.cardIdPrefix + (++status.cardSeq),
-                selector = '#' + cardId;
+            var cardContainerId = options.cardContainerIdPrefix + (++status.cardSeq),
+                selector = '#' + cardContainerId;
 
-            $canvas.append('<div class="card-container"><div class="card" id="' + cardId + '"></div></div>');
+            $canvas.append('<div class="card-container" id="' + cardContainerId + '" ></div>');
 
-            putItHere($(selector).closest('.card-container'), event);
+            putItHere($(selector), event);
         }
     });
 
     registerCommand({
-        name: 'handle-zoom',
+        name: 'card',
+        label: 'icon 1',
+        active: function () {
+            $('.card-container', $canvas)
+            .addClass('accept-card')
+            .on('mousedown', this.mousedown);
+        },
+        deactive: function () {
+            $('.card-container', $canvas)
+            .removeClass('accept-card')
+            .off('mousedown', this.mousedown);
+        },
+        mousedown: function (event) {
+            var cardId = options.cardIdPrefix + (++status.cardSeq),
+                $cardContainer = $(event.srcElement).closest('.card-container');
+
+            $cardContainer.append('<div class="card" id="' + cardId + '"></div>');
+        }
+    });
+
+    registerCommand({
+        name: 'handle-resize',
         label: 'resize',
         active: function () {
-            $('.card', $canvas)
+            $('.card-container', $canvas)
             .addClass('accept-handle')
             .on('mousedown', this.mousedown);
         },
         deactive: function () {
-            $('.card', $canvas)
+            $('.card-container', $canvas)
             .removeClass('accept-handle')
             .off('mousedown', this.mousedown);
         },
