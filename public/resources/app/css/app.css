@@ -1,19 +1,19 @@
 html,body {
   width: 100%;
   height: 100%;
+  margin: 0;
 }
 
 .col-left-fixed {
   width: 180px;
   height: 100%;
-  padding: 10px;
   background-color: yellow;
   float: left;
 }
 
 .col-left-fill {
   height: 100%;
-  width: calc(100% - 200px);
+  width: calc(100% - 180px);
   background-color: antiquewhite;
   float: left;
 }
@@ -48,16 +48,32 @@ html,body {
   border: solid black 1px;
 }
 
+.option-panel {
+  background-color: #ccc;
+  padding: 5px;
+}
+
+.option-button {
+  width: 70px;
+  height: 70px;
+}
+
+.canvas {
+  width: 100%;
+  height: 100%;
+  background-color: #eee;
+}
+
 .card-container {
-  width: 300px;
-  height: 400px;
+  width: 306px;
+  height: 406px;
   position: absolute;
+  background-color: #ddd;
 }
 
 .card {
   width: 100%;
   height: 100%;
-  background-color: darkgoldenrod;
   border: solid black 2px;
   position: absolute;
 }
@@ -66,6 +82,9 @@ html,body {
   background-color: darkolivegreen;
 }
 
+.accept-card:hover {
+  background-color: darkolivegreen;
+}
 
 .handle {
   width: 80px;

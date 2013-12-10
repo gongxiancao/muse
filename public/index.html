@@ -10,14 +10,18 @@
     <!-- compiled CSS -->
     <link rel="stylesheet" type="text/css" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css"/>
     <link rel="stylesheet" type="text/css" href="resources/app/css/app.css"/>
-    
+    <link rel="stylesheet" type="text/css" href="resources/lib/colorpicker/css/colorpicker.css" />
+
     <!-- compiled JavaScript -->
     <script type="text/javascript" src="resources/lib/jquery/jquery.js"></script>
     <script type="text/javascript" src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+    <script type="text/javascript" src="resources/lib/colorpicker/js/colorpicker.js"></script>
     <script type="text/javascript" src="resources/app/js/app.js"></script>
 </head>
 <body>
-    <div class="col-left-fixed tool-panel">
+    <div class="col-left-fixed">
+        <div class="tool-panel">
+        </div>
         <!--
         <div class="tool-button" tool="card">
             icon 1
@@ -30,9 +34,16 @@
         </div>
         -->
     </div>
-    <div class="col-left-fill canvas">
+    <div class="col-left-fill">
         <!--div class="container"><div class="transformed">test</div></div-->
-
+        <div class="row-top-fixed">
+            <div class="option-panel">
+                <div class="option-button" id="color-picker"></div>
+            </div>
+        </div>
+        <div class="row-top-fill">
+            <div class="canvas"></div>
+        </div>
     </div>
 </body>
 </html>

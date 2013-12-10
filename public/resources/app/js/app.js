@@ -8,7 +8,8 @@ $(function (argument) {
         options = {
             cardIdPrefix: 'card-',
             cardContainerIdPrefix: 'card-container-',
-            handleIdPrefix: 'handle-'
+            handleIdPrefix: 'handle-',
+            color: '#00f'
         },
         toolCommands = {},
         $canvas = $('.canvas');
@@ -88,6 +89,29 @@ $(function (argument) {
         offset.top += offsetY;
     }
 
+
+    function initColorPicker() {
+        var color = options.color;
+        $('#color-picker').css('background-color', color);
+        $('#color-picker').ColorPicker({
+            color: color,
+            onShow: function (colpkr) {
+                $(colpkr).fadeIn(500);
+                return false;
+            },
+            onHide: function (colpkr) {
+                $(colpkr).fadeOut(500);
+                return false;
+            },
+            onChange: function (hsb, hex, rgb) {
+                options.color = '#' + hex;
+                $('#color-picker').css('background-color', options.color);
+            }
+        });
+    }
+
+    initColorPicker();
+
     registerCommand({
         name: 'none',
         label: 'none',
@@ -130,9 +154,11 @@ $(function (argument) {
         },
         mousedown: function (event) {
             var cardId = options.cardIdPrefix + (++status.cardSeq),
+                selector = '#' + cardId;
                 $cardContainer = $(event.srcElement).closest('.card-container');
 
             $cardContainer.append('<div class="card" id="' + cardId + '"></div>');
+            $(selector).css('background-color', options.color);
         }
     });
 
