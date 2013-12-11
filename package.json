@@ -1,0 +1,27 @@
+{
+  "name": "muse",
+  "version": "0.0.0",
+  "description": "app demo",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gongxiancao/muse.git"
+  },
+  "keywords": [
+    "mobile",
+    "design"
+  ],
+  "author": "gongxiancao",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/gongxiancao/muse/issues"
+  },
+  "homepage": "https://github.com/gongxiancao/muse",
+  "dependencies": {
+    "connect": "~2.11.2"
+  }
+}

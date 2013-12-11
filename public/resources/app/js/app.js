@@ -124,10 +124,10 @@ $(function (argument) {
         name: 'card-container',
         label: 'icon 0',
         active: function () {
-            $canvas.on('mousedown', this.mousedown);
+            $canvas.on('mousedown touchstart', this.mousedown);
         },
         deactive: function () {
-            $canvas.off('mousedown', this.mousedown);
+            $canvas.off('mousedown touchstart', this.mousedown);
         },
         mousedown: function (event) {
             var cardContainerId = options.cardContainerIdPrefix + (++status.cardSeq),
@@ -145,12 +145,12 @@ $(function (argument) {
         active: function () {
             $('.card-container', $canvas)
             .addClass('accept-card')
-            .on('mousedown', this.mousedown);
+            .on('mousedown touchstart', this.mousedown);
         },
         deactive: function () {
             $('.card-container', $canvas)
             .removeClass('accept-card')
-            .off('mousedown', this.mousedown);
+            .off('mousedown touchstart', this.mousedown);
         },
         mousedown: function (event) {
             var cardId = options.cardIdPrefix + (++status.cardSeq),
@@ -168,12 +168,12 @@ $(function (argument) {
         active: function () {
             $('.card-container', $canvas)
             .addClass('accept-handle')
-            .on('mousedown', this.mousedown);
+            .on('mousedown touchstart', this.mousedown);
         },
         deactive: function () {
             $('.card-container', $canvas)
             .removeClass('accept-handle')
-            .off('mousedown', this.mousedown);
+            .off('mousedown touchstart', this.mousedown);
         },
         mousedown: function (event) {
             var $card = $(event.srcElement).closest('.card-container'),
@@ -235,12 +235,12 @@ $(function (argument) {
         active: function () {
             $('.card', $canvas)
             .addClass('accept-handle')
-            .on('mousedown', this.mousedown);
+            .on('mousedown touchstart', this.mousedown);
         },
         deactive: function () {
             $('.card', $canvas)
             .removeClass('accept-handle')
-            .off('mousedown', this.mousedown);
+            .off('mousedown touchstart', this.mousedown);
         },
         mousedown: function (event) {
             var $card = $(event.srcElement).closest('.card'),
@@ -291,15 +291,15 @@ $(function (argument) {
         label: 'handle',
         active: function () {
             $canvas
-            .on('mousedown', '.handle', this.mousedown)
-            .on('mousemove', this.mousemove)
-            .on('mouseup', '.handle', this.mouseup);
+            .on('mousedown touchstart', '.handle', this.mousedown)
+            .on('mousemove touchmove', this.mousemove)
+            .on('mouseup touchend', '.handle', this.mouseup);
         },
         deactive: function () {
             $canvas
-            .off('mousedown', '.handle', this.mousedown)
-            .off('mousemove', this.mousemove)
-            .off('mouseup', '.handle', this.mouseup);
+            .off('mousedown touchstart', '.handle', this.mousedown)
+            .off('mousemove touchmove', this.mousemove)
+            .off('mouseup touchend', '.handle', this.mouseup);
         },
         mousedown: function (event) {
             var $element = $(event.srcElement).closest('.handle'),
@@ -337,13 +337,6 @@ $(function (argument) {
 
     $('.tool-panel').on('mousedown', '.tool-button', function (event) {
         activateTool($(event.srcElement).attr('tool'));
-    });
-
-    $canvas.on('mousedown', function (event) {
-
-    });
-
-    $canvas.on('mouseup', function (event) {
     });
 
 });
