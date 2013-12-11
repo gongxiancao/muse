@@ -14,10 +14,6 @@ $(function (argument) {
         toolCommands = {},
         $canvas = $('.canvas');
 
-    $canvas.on('touchstart', function () {
-        alert('touchstart');
-    });
-
     $.fn.rotateY = function (amount) {
         amount = 'rotateY(' + amount + 'deg)';
         return this.each(function () {
@@ -132,6 +128,7 @@ $(function (argument) {
             $canvas.off('mousedown touchstart', this.mousedown);
         },
         mousedown: function (event) {
+            event.preventDefault();
             var cardContainerId = options.cardContainerIdPrefix + (++status.cardSeq),
                 selector = '#' + cardContainerId;
 
@@ -155,6 +152,7 @@ $(function (argument) {
             .off('mousedown touchstart', this.mousedown);
         },
         mousedown: function (event) {
+            event.preventDefault();
             var cardId = options.cardIdPrefix + (++status.cardSeq),
                 selector = '#' + cardId;
                 $cardContainer = $(event.srcElement).closest('.card-container');
@@ -178,6 +176,7 @@ $(function (argument) {
             .off('mousedown touchstart', this.mousedown);
         },
         mousedown: function (event) {
+            event.preventDefault();
             var $card = $(event.srcElement).closest('.card-container'),
                 $topLeftHandle,
                 topLeftId,
@@ -245,6 +244,7 @@ $(function (argument) {
             .off('mousedown touchstart', this.mousedown);
         },
         mousedown: function (event) {
+            event.preventDefault();
             var $card = $(event.srcElement).closest('.card'),
                 $handle,
                 handleId,
@@ -304,6 +304,7 @@ $(function (argument) {
             .off('mouseup touchend', '.handle', this.mouseup);
         },
         mousedown: function (event) {
+            event.preventDefault();
             var $element = $(event.srcElement).closest('.handle'),
                 elementStartOffset = $element.offset();
 
@@ -311,6 +312,7 @@ $(function (argument) {
             status.dragStart.element.trigger('handledown');
         },
         mousemove: function (event) {
+            event.preventDefault();
             var offset,
                 dragStart = status.dragStart;
 
@@ -323,6 +325,7 @@ $(function (argument) {
             }
         },
         mouseup: function (event) {
+            event.preventDefault();
             var offset,
                 dragStart = status.dragStart;
 
