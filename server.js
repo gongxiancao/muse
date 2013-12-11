@@ -15,8 +15,7 @@ var app = connect()
         res.end('Hello from Connect!\n');
     });
 
-port = parseInt(process.argv[2]);
-port = isNaN(port)? 3000 : port;
-console.log('Start server with argv = ', process.argv, ', port = ', port);
+port = process.env.PORT || 3000;
+console.log('Start server with port = ', port);
 
 http.createServer(app).listen(port);
