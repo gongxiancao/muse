@@ -134,14 +134,14 @@ $(function (argument) {
             }
         })
         .on('touchstart', function (event) {
-            log(event.targetTouches);
+            log(Object.keys(event));
             event.preventDefault();
         })
         .on('touchmove', function (event) {
             event.preventDefault();
         })
         .on('touchend', function(event) {
-            log(event.targetTouches);
+            log(Object.keys(event));
             event.preventDefault();
         });
     }
@@ -374,6 +374,7 @@ $(function (argument) {
             $canvas
             .empty()
             .off('mousedown mouseup mousemove touchstart touchmove touchend handledown handlemove handleup');
+            $('.log').empty();
         },
         deactive: noop
     });
