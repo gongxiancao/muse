@@ -87,6 +87,9 @@ $(function (argument) {
         offset.top += offsetY;
     }
 
+    function log(obj) {
+        $('.log').append('<div>' + JSON.stringify(obj) + '</div>');
+    }
 
     function initColorPicker() {
         var color = options.color;
@@ -131,12 +134,14 @@ $(function (argument) {
             }
         })
         .on('touchstart', function (event) {
+            log(event.targetTouches);
             event.preventDefault();
         })
         .on('touchmove', function (event) {
             event.preventDefault();
         })
         .on('touchend', function(event) {
+            log(event.targetTouches);
             event.preventDefault();
         });
     }
