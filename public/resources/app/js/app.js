@@ -52,7 +52,7 @@ $(function (argument) {
     }
 
     function toolActivated(tool) {
-        $(event.srcElement).addClass('active-tool');
+        $('.tool-button[tool="' + tool + '"]').addClass('active-tool');
         toolCommands[tool].active();
     }
 
@@ -62,7 +62,7 @@ $(function (argument) {
     }
 
     function putItHere(ele, event) {
-        ele.offset({top:event.clientY, left:event.clientX});
+        ele.offset({left: event.x, top: event.y});
     }
 
     function shouldHandleEvent(event) {
@@ -110,6 +110,39 @@ $(function (argument) {
 
     initColorPicker();
 
+    function initEventAdapter() {
+        $('body')
+        .on('mousedown', function (event) {
+            event.preventDefault();
+            if(event.which) {
+                $(event.srcElement).trigger('down', {srcElement: event.srcElement, x: event.clientX, y: event.clientY});
+            }
+        })
+        .on('mousemove', function (event) {
+            event.preventDefault();
+            if(event.which) {
+                $(event.srcElement).trigger('move', {srcElement: event.srcElement, x: event.clientX, y: event.clientY});
+            }
+        })
+        .on('mouseup', function (event) {
+            event.preventDefault();
+            if(event.which) {
+                $(event.srcElement).trigger('up', {srcElement: event.srcElement, x: event.clientX, y: event.clientY});
+            }
+        })
+        .on('touchstart', function (event) {
+            event.preventDefault();
+        })
+        .on('touchmove', function (event) {
+            event.preventDefault();
+        })
+        .on('touchend', function(event) {
+            event.preventDefault();
+        });
+    }
+
+    initEventAdapter();
+
     registerCommand({
         name: 'none',
         label: 'none',
@@ -122,19 +155,18 @@ $(function (argument) {
         name: 'card-container',
         label: 'icon 0',
         active: function () {
-            $canvas.on('mousedown touchstart', this.mousedown);
+            $canvas.on('down', this.down);
         },
         deactive: function () {
-            $canvas.off('mousedown touchstart', this.mousedown);
+            $canvas.off('down', this.down);
         },
-        mousedown: function (event) {
-            event.preventDefault();
+        down: function (event, data) {
             var cardContainerId = options.cardContainerIdPrefix + (++status.cardSeq),
                 selector = '#' + cardContainerId;
 
             $canvas.append('<div class="card-container" id="' + cardContainerId + '" ></div>');
 
-            putItHere($(selector), event);
+            putItHere($(selector), data);
         }
     });
 
@@ -144,18 +176,17 @@ $(function (argument) {
         active: function () {
             $('.card-container', $canvas)
             .addClass('accept-card')
-            .on('mousedown touchstart', this.mousedown);
+            .on('down', this.down);
         },
         deactive: function () {
             $('.card-container', $canvas)
             .removeClass('accept-card')
-            .off('mousedown touchstart', this.mousedown);
+            .off('down', this.down);
         },
-        mousedown: function (event) {
-            event.preventDefault();
+        down: function (event, data) {
             var cardId = options.cardIdPrefix + (++status.cardSeq),
                 selector = '#' + cardId;
-                $cardContainer = $(event.srcElement).closest('.card-container');
+                $cardContainer = $(data.srcElement).closest('.card-container');
 
             $cardContainer.append('<div class="card" id="' + cardId + '"></div>');
             $(selector).css('background-color', options.color);
@@ -168,16 +199,15 @@ $(function (argument) {
         active: function () {
             $('.card-container', $canvas)
             .addClass('accept-handle')
-            .on('mousedown touchstart', this.mousedown);
+            .on('down', this.down);
         },
         deactive: function () {
             $('.card-container', $canvas)
             .removeClass('accept-handle')
-            .off('mousedown touchstart', this.mousedown);
+            .off('down', this.down);
         },
-        mousedown: function (event) {
-            event.preventDefault();
-            var $card = $(event.srcElement).closest('.card-container'),
+        down: function (event, data) {
+            var $card = $(data.srcElement).closest('.card-container'),
                 $topLeftHandle,
                 topLeftId,
                 $bottomRightHandle,
@@ -236,16 +266,15 @@ $(function (argument) {
         active: function () {
             $('.card', $canvas)
             .addClass('accept-handle')
-            .on('mousedown touchstart', this.mousedown);
+            .on('down', this.down);
         },
         deactive: function () {
             $('.card', $canvas)
             .removeClass('accept-handle')
-            .off('mousedown touchstart', this.mousedown);
+            .off('down', this.down);
         },
-        mousedown: function (event) {
-            event.preventDefault();
-            var $card = $(event.srcElement).closest('.card'),
+        down: function (event, data) {
+            var $card = $(data.srcElement).closest('.card'),
                 $handle,
                 handleId,
                 cardOffset,
@@ -258,7 +287,7 @@ $(function (argument) {
                 .rotateY(offset.x * 0.25 + rotateStart);
             }
 
-            function rememberStart (event) {
+            function rememberStart () {
                 rotateStart = parseFloat($card.attr('rotateY'));
                 if(isNaN(rotateStart)) {
                     rotateStart = 0;
@@ -293,50 +322,43 @@ $(function (argument) {
         label: 'handle',
         active: function () {
             $canvas
-            .on('mousedown touchstart', '.handle', this.mousedown)
-            .on('mousemove touchmove', this.mousemove)
-            .on('mouseup touchend', '.handle', this.mouseup);
+            .on('down', '.handle', this.down)
+            .on('move', this.move)
+            .on('up', '.handle', this.up);
         },
         deactive: function () {
             $canvas
-            .off('mousedown touchstart', '.handle', this.mousedown)
-            .off('mousemove touchmove', this.mousemove)
-            .off('mouseup touchend', '.handle', this.mouseup);
+            .off('down', '.handle', this.down)
+            .off('move', this.move)
+            .off('up', '.handle', this.up);
         },
-        mousedown: function (event) {
-            event.preventDefault();
-            var $element = $(event.srcElement).closest('.handle'),
+        down: function (event, data) {
+            var $element = $(data.srcElement).closest('.handle'),
                 elementStartOffset = $element.offset();
 
-            status.dragStart = {deviceStart: {x: event.clientX, y: event.clientY}, element: $element, elementStart: elementStartOffset};
+            status.dragStart = {deviceStart: {x: data.x, y: data.y}, element: $element, elementStart: elementStartOffset};
             status.dragStart.element.trigger('handledown');
         },
-        mousemove: function (event) {
-            event.preventDefault();
+        move: function (event, data) {
             var offset,
                 dragStart = status.dragStart;
 
-            if(dragStart && event.which) {
-                offset = {};
-                offset.x = event.clientX - dragStart.deviceStart.x;
-                offset.y = event.clientY - dragStart.deviceStart.y;
+            if(dragStart) {
+                offset = {x: data.x - dragStart.deviceStart.x, y: data.y - dragStart.deviceStart.y};
                 dragStart.element.offset({left: dragStart.elementStart.left + offset.x, top: dragStart.elementStart.top + offset.y});
                 dragStart.element.trigger('handlemove', offset);
             }
         },
-        mouseup: function (event) {
-            event.preventDefault();
+        up: function (event, data) {
             var offset,
                 dragStart = status.dragStart;
 
-            if(dragStart && event.which) {
-                offset = {};
-                offset.x = event.clientX - dragStart.deviceStart.x;
-                offset.y = event.clientY - dragStart.deviceStart.y;
+            if(dragStart) {
+                offset = {x: data.x - dragStart.deviceStart.x, y: data.y - dragStart.deviceStart.y};
                 dragStart.element.offset({left: dragStart.elementStart.left + offset.x, top: dragStart.elementStart.top + offset.y});
                 dragStart.element.trigger('handleup', offset);
             }
-            status.dragStart = undefined;
+            delete status.dragStart;
         }
     });
 
@@ -352,8 +374,8 @@ $(function (argument) {
     });
 
 
-    $('.tool-panel').on('mousedown', '.tool-button', function (event) {
-        activateTool($(event.srcElement).attr('tool'));
+    $('.tool-panel').on('down', '.tool-button', function (event, data) {
+        activateTool($(data.srcElement).attr('tool'));
     });
 
 });
