@@ -335,6 +335,18 @@ $(function (argument) {
         }
     });
 
+    registerCommand({
+        name: 'clear-all',
+        label: 'Clear all',
+        active: function () {
+            $canvas
+            .empty()
+            .off('mousedown mouseup mousemove touchstart touchmove touchend handledown handlemove handleup');
+        },
+        deactive: noop
+    });
+
+
     $('.tool-panel').on('mousedown', '.tool-button', function (event) {
         activateTool($(event.srcElement).attr('tool'));
     });
