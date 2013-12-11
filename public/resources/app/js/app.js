@@ -14,7 +14,9 @@ $(function (argument) {
         toolCommands = {},
         $canvas = $('.canvas');
 
-
+    $canvas.on('touchstart', function () {
+        alert('touchstart');
+    });
 
     $.fn.rotateY = function (amount) {
         amount = 'rotateY(' + amount + 'deg)';
