@@ -115,34 +115,34 @@ $(function (argument) {
 
     function initEventAdapter() {
         $('body')
-        .on('mousedown', function (event) {
-            event.preventDefault();
-            if(event.which) {
-                $(event.srcElement).trigger('down', {srcElement: event.srcElement, x: event.clientX, y: event.clientY});
+        .on('mousedown', function (evt) {
+            evt.preventDefault();
+            if(evt.which) {
+                $(evt.srcElement).trigger('down', {srcElement: evt.srcElement, x: evt.clientX, y: evt.clientY});
             }
         })
-        .on('mousemove', function (event) {
-            event.preventDefault();
-            if(event.which) {
-                $(event.srcElement).trigger('move', {srcElement: event.srcElement, x: event.clientX, y: event.clientY});
+        .on('mousemove', function (evt) {
+            evt.preventDefault();
+            if(evt.which) {
+                $(evt.srcElement).trigger('move', {srcElement: evt.srcElement, x: evt.clientX, y: evt.clientY});
             }
         })
-        .on('mouseup', function (event) {
-            event.preventDefault();
-            if(event.which) {
-                $(event.srcElement).trigger('up', {srcElement: event.srcElement, x: event.clientX, y: event.clientY});
+        .on('mouseup', function (evt) {
+            evt.preventDefault();
+            if(evt.which) {
+                $(evt.srcElement).trigger('up', {srcElement: evt.srcElement, x: evt.clientX, y: evt.clientY});
             }
         })
-        .on('touchstart', function (event) {
-            log(Object.keys(event));
-            event.preventDefault();
+        .on('touchstart', function (evt) {
+            log(Object.keys(evt));
+            evt.preventDefault();
         })
-        .on('touchmove', function (event) {
-            event.preventDefault();
+        .on('touchmove', function (evt) {
+            evt.preventDefault();
         })
-        .on('touchend', function(event) {
-            log(Object.keys(event));
-            event.preventDefault();
+        .on('touchend', function(evt) {
+            log(Object.keys(evt));
+            evt.preventDefault();
         });
     }
 
