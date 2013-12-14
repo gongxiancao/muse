@@ -87,8 +87,13 @@ $(function (argument) {
         offset.top += offsetY;
     }
 
+    var maxLog = 30;
+    var $log = $('.log');
     function log(obj) {
         $('.log').append('<div>' + JSON.stringify(obj) + '</div>');
+        if($log.children().length >= maxLog) {
+            $log.children().first().remove();
+        }
     }
 
     function initColorPicker() {
@@ -113,37 +118,51 @@ $(function (argument) {
 
     initColorPicker();
 
+    var eventTypeMap = {
+        mousedown: 'down',
+        mousemove: 'move',
+        mouseup: 'up',
+        touchstart: 'down',
+        touchmove: 'move',
+        touchend: 'up'
+    };
+
+    function adaptMouseEvent (evt) {
+        var targetEventType = eventTypeMap[evt.type];
+        evt.preventDefault();
+        if(evt.which) {
+            if(targetEventType === 'down') {
+                status.dragStart = {element: evt.srcElement};
+            }
+
+            $(evt.srcElement).trigger(targetEventType, {srcElement: status.dragStart.element, x: evt.clientX, y: evt.clientY});
+
+            if(targetEventType === 'up') {
+                delete status.dragStart;
+            }
+        }
+    }
+
+    function adaptTouchEvent (evt) {
+        var targetEventType = eventTypeMap[evt.type];
+        evt.preventDefault();
+
+        if(evt.originalEvent.targetTouches) {
+            for(var i = evt.originalEvent.targetTouches.length - 1; i >= 0; --i) {
+                touch = evt.originalEvent.targetTouches[i];
+                $(touch.target).trigger(targetEventType, {srcElement: touch.target, x: touch.clientX, y: touch.clientY});
+            }
+        }
+    }
+
     function initEventAdapter() {
         $('body')
-        .on('mousedown', function (evt) {
-            evt.preventDefault();
-            if(evt.which) {
-                $(evt.srcElement).trigger('down', {srcElement: evt.srcElement, x: evt.clientX, y: evt.clientY});
-            }
-        })
-        .on('mousemove', function (evt) {
-            evt.preventDefault();
-            if(evt.which) {
-                $(evt.srcElement).trigger('move', {srcElement: evt.srcElement, x: evt.clientX, y: evt.clientY});
-            }
-        })
-        .on('mouseup', function (evt) {
-            evt.preventDefault();
-            if(evt.which) {
-                $(evt.srcElement).trigger('up', {srcElement: evt.srcElement, x: evt.clientX, y: evt.clientY});
-            }
-        })
-        .on('touchstart', function (evt) {
-            log(Object.keys(evt));
-            evt.preventDefault();
-        })
-        .on('touchmove', function (evt) {
-            evt.preventDefault();
-        })
-        .on('touchend', function(evt) {
-            log(Object.keys(evt));
-            evt.preventDefault();
-        });
+        .on('mousedown', adaptMouseEvent)
+        .on('mousemove', adaptMouseEvent)
+        .on('mouseup', adaptMouseEvent)
+        .on('touchstart', adaptTouchEvent)
+        .on('touchmove', adaptTouchEvent)
+        .on('touchend', adaptTouchEvent);
     }
 
     initEventAdapter();
@@ -158,7 +177,7 @@ $(function (argument) {
 
     registerCommand({
         name: 'card-container',
-        label: 'icon 0',
+        label: 'Container',
         active: function () {
             $canvas.on('down', this.down);
         },
@@ -177,7 +196,7 @@ $(function (argument) {
 
     registerCommand({
         name: 'card',
-        label: 'icon 1',
+        label: 'Card',
         active: function () {
             $('.card-container', $canvas)
             .addClass('accept-card')
@@ -200,7 +219,7 @@ $(function (argument) {
 
     registerCommand({
         name: 'handle-resize',
-        label: 'resize',
+        label: 'Resize',
         active: function () {
             $('.card-container', $canvas)
             .addClass('accept-handle')
@@ -267,7 +286,7 @@ $(function (argument) {
 
     registerCommand({
         name: 'handle-rotate',
-        label: 'rotate',
+        label: 'Rotate',
         active: function () {
             $('.card', $canvas)
             .addClass('accept-handle')
@@ -286,10 +305,10 @@ $(function (argument) {
                 rotateStart;
 
             function update (event, offset) {
-                $card.attr('rotateY', offset.x * 0.25 + rotateStart);
+                $card.attr('rotateY', offset.x * 1 + rotateStart);
 
                 $card
-                .rotateY(offset.x * 0.25 + rotateStart);
+                .rotateY(offset.x * 1 + rotateStart);
             }
 
             function rememberStart () {
@@ -324,7 +343,7 @@ $(function (argument) {
 
     registerCommand({
         name: 'handle',
-        label: 'handle',
+        label: 'Handle',
         active: function () {
             $canvas
             .on('down', '.handle', this.down)
@@ -337,48 +356,64 @@ $(function (argument) {
             .off('move', this.move)
             .off('up', '.handle', this.up);
         },
-        down: function (event, data) {
+        down: function (evt, data) {
             var $element = $(data.srcElement).closest('.handle'),
                 elementStartOffset = $element.offset();
 
-            status.dragStart = {deviceStart: {x: data.x, y: data.y}, element: $element, elementStart: elementStartOffset};
-            status.dragStart.element.trigger('handledown');
+            data.srcElement.dragStart = {deviceStart: {x: data.x, y: data.y}, element: $element, elementStart: elementStartOffset};
+            data.srcElement.dragStart.element.trigger('handledown');
         },
-        move: function (event, data) {
+        move: function (evt, data) {
             var offset,
-                dragStart = status.dragStart;
-
+                dragStart = data.srcElement.dragStart;
             if(dragStart) {
                 offset = {x: data.x - dragStart.deviceStart.x, y: data.y - dragStart.deviceStart.y};
                 dragStart.element.offset({left: dragStart.elementStart.left + offset.x, top: dragStart.elementStart.top + offset.y});
                 dragStart.element.trigger('handlemove', offset);
             }
         },
-        up: function (event, data) {
+        up: function (evt, data) {
             var offset,
-                dragStart = status.dragStart;
+                dragStart = data.srcElement.dragStart;
 
             if(dragStart) {
                 offset = {x: data.x - dragStart.deviceStart.x, y: data.y - dragStart.deviceStart.y};
                 dragStart.element.offset({left: dragStart.elementStart.left + offset.x, top: dragStart.elementStart.top + offset.y});
                 dragStart.element.trigger('handleup', offset);
             }
-            delete status.dragStart;
+            delete data.srcElement.dragStart;
         }
     });
 
+    registerCommand({
+        name: 'clear-log',
+        label: 'Clear log',
+        active: function () {
+            $canvas
+            .off('down move up');
+            $('.log').empty();
+        },
+        deactive: noop
+    });
     registerCommand({
         name: 'clear-all',
         label: 'Clear all',
         active: function () {
             $canvas
             .empty()
-            .off('mousedown mouseup mousemove touchstart touchmove touchend handledown handlemove handleup');
+            .off('down move up');
             $('.log').empty();
         },
         deactive: noop
     });
-
+    registerCommand({
+        name: 'log',
+        label: 'Log',
+        active: function () {
+            $log.parent().slideToggle();
+        },
+        deactive: noop
+    });
 
     $('.tool-panel').on('down', '.tool-button', function (event, data) {
         activateTool($(data.srcElement).attr('tool'));
