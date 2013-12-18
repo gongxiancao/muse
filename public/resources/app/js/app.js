@@ -72,13 +72,18 @@ $(function (argument) {
     function noop() {};
 
     function registerCommand (command) {
+        command.panel = command.panel || 'left';
         toolCommands[command.name] = command;
         commandRegistered(command);
     }
 
     function commandRegistered (command) {
         if(!command.hide) {
-            $('.tool-panel').append('<div class="tool-button" tool="' + command.name + '">' + command.label + '</div>');
+            var content = command.label;
+            if(command.background) {
+                content = '<img src="' + command.background + '"/>';
+            }
+            $('.tool-panel' + '.' + command.panel).append('<div class="tool-button" tool="' + command.name + '">' + content + '</div>');
         }
     }
 
@@ -178,6 +183,7 @@ $(function (argument) {
     registerCommand({
         name: 'card-container',
         label: 'Container',
+        panel: 'top',
         active: function () {
             $canvas.on('down', this.down);
         },
@@ -194,18 +200,20 @@ $(function (argument) {
         }
     });
 
-    registerCommand({
+    var cardCommandPrototype = {
         name: 'card',
         label: 'Card',
+        panel: 'top',
         active: function () {
+            this.bind = this.down.bind(this);
             $('.card-container', $canvas)
             .addClass('accept-card')
-            .on('down', this.down);
+            .on('down', this.bind);
         },
         deactive: function () {
             $('.card-container', $canvas)
             .removeClass('accept-card')
-            .off('down', this.down);
+            .off('down', this.bind);
         },
         down: function (event, data) {
             var cardId = options.cardIdPrefix + (++status.cardSeq),
@@ -213,9 +221,17 @@ $(function (argument) {
                 $cardContainer = $(data.srcElement).closest('.card-container');
 
             $cardContainer.append('<div class="card" id="' + cardId + '"></div>');
-            $(selector).css('background-color', options.color);
+            $(selector).append('<img src="' + this.background + '"/>');
         }
-    });
+    };
+
+    var cardCommand = Object.create(cardCommandPrototype);
+    $.extend(cardCommand, {name: 'card1', label: 'Card1', background: '/resources/app/images/cover.png'});
+    registerCommand(cardCommand);
+
+    cardCommand = Object.create(cardCommandPrototype);
+    $.extend(cardCommand, {name: 'card2', label: 'Card2', background: '/resources/app/images/content.png'});
+    registerCommand(cardCommand);
 
     registerCommand({
         name: 'handle-resize',
@@ -416,7 +432,7 @@ $(function (argument) {
     });
 
     $('.tool-panel').on('down', '.tool-button', function (event, data) {
-        activateTool($(data.srcElement).attr('tool'));
+        activateTool($(data.srcElement).closest('.tool-button').attr('tool'));
     });
 
 });

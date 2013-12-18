@@ -21,7 +21,7 @@ html,body {
 }
 
 .row-top-fixed {
-  height: 80px;
+  height: 90px;
   width: 100%;
   background-color: green;
 }
@@ -30,7 +30,7 @@ html,body {
   /*height: calc(100% - 80px);*/
   position: absolute;
   width: 100%;
-  top: 80px;
+  top: 90px;
   bottom: 0px;
 
   background-color: cyan;
@@ -47,6 +47,12 @@ html,body {
   margin: 5px;
   background-color: chocolate;
   border: solid black 1px;
+}
+
+.tool-button img {
+  width: 100%;
+  height: 100%;
+  background-color: white;
 }
 
 .option-panel {
@@ -95,6 +101,11 @@ html,body {
   height: 100%;
   border: solid black 2px;
   position: absolute;
+}
+.card img{
+  width: 100%;
+  height: 100%;
+  background-color: white;
 }
 
 .accept-handle:hover {
