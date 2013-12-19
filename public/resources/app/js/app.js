@@ -61,12 +61,12 @@ $(function (argument) {
         toolCommands[tool].deactive();
     }
 
-    function putItHere(ele, event) {
-        ele.offset({left: event.x, top: event.y});
+    function putItHere(ele, evt) {
+        ele.offset({left: evt.x, top: evt.y});
     }
 
-    function shouldHandleEvent(event) {
-        return event.button === 0;
+    function shouldHandleEvent(evt) {
+        return evt.button === 0;
     }
 
     function noop() {};
@@ -190,7 +190,7 @@ $(function (argument) {
         deactive: function () {
             $canvas.off('down', this.down);
         },
-        down: function (event, data) {
+        down: function (evt, data) {
             var cardContainerId = options.cardContainerIdPrefix + (++status.cardSeq),
                 selector = '#' + cardContainerId;
 
@@ -205,23 +205,22 @@ $(function (argument) {
         label: 'Card',
         panel: 'top',
         active: function () {
-            this.bind = this.down.bind(this);
             $('.card-container', $canvas)
             .addClass('accept-card')
-            .on('down', this.bind);
+            .on('down', null, this, this.down);
         },
         deactive: function () {
             $('.card-container', $canvas)
             .removeClass('accept-card')
-            .off('down', this.bind);
+            .off('down', this.down);
         },
-        down: function (event, data) {
+        down: function (evt, data) {
             var cardId = options.cardIdPrefix + (++status.cardSeq),
                 selector = '#' + cardId;
                 $cardContainer = $(data.srcElement).closest('.card-container');
 
             $cardContainer.append('<div class="card" id="' + cardId + '"></div>');
-            $(selector).append('<img src="' + this.background + '"/>');
+            $(selector).append('<img src="' + evt.data.background + '"/>');
         }
     };
 
@@ -246,7 +245,7 @@ $(function (argument) {
             .removeClass('accept-handle')
             .off('down', this.down);
         },
-        down: function (event, data) {
+        down: function (evt, data) {
             var $card = $(data.srcElement).closest('.card-container'),
                 $topLeftHandle,
                 topLeftId,
@@ -313,14 +312,14 @@ $(function (argument) {
             .removeClass('accept-handle')
             .off('down', this.down);
         },
-        down: function (event, data) {
+        down: function (evt, data) {
             var $card = $(data.srcElement).closest('.card'),
                 $handle,
                 handleId,
                 cardOffset,
                 rotateStart;
 
-            function update (event, offset) {
+            function update (evt, offset) {
                 $card.attr('rotateY', offset.x * 1 + rotateStart);
 
                 $card
@@ -431,7 +430,7 @@ $(function (argument) {
         deactive: noop
     });
 
-    $('.tool-panel').on('down', '.tool-button', function (event, data) {
+    $('.tool-panel').on('down', '.tool-button', function (evt, data) {
         activateTool($(data.srcElement).closest('.tool-button').attr('tool'));
     });
 
