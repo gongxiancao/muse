@@ -365,6 +365,7 @@ $(function (argument) {
         name: 'handle',
         label: 'Handle',
         activation: 'passive', // Active handle command automatically
+        hide: true,
         active: function () {
             $canvas
             .on('down', '.handle', this.down)
