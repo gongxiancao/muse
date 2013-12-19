@@ -73,8 +73,13 @@ $(function (argument) {
 
     function registerCommand (command) {
         command.panel = command.panel || 'left';
+        command.activation = command.activation || 'active';
         toolCommands[command.name] = command;
         commandRegistered(command);
+
+        if(command.activation === 'passive') {
+            command.active();
+        }
     }
 
     function commandRegistered (command) {
@@ -135,7 +140,7 @@ $(function (argument) {
     function adaptMouseEvent (evt) {
         var targetEventType = eventTypeMap[evt.type];
         evt.preventDefault();
-        if(evt.which) {
+        if(evt.which === 1) {
             if(targetEventType === 'down') {
                 status.dragStart = {element: evt.srcElement};
             }
@@ -359,6 +364,7 @@ $(function (argument) {
     registerCommand({
         name: 'handle',
         label: 'Handle',
+        activation: 'passive', // Active handle command automatically
         active: function () {
             $canvas
             .on('down', '.handle', this.down)

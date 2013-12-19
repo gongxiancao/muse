@@ -55,6 +55,11 @@ html,body {
   background-color: white;
 }
 
+.active-tool img {
+  opacity: .5;
+  background-color: white;
+}
+
 .option-panel {
   background-color: #ccc;
   padding: 5px;
